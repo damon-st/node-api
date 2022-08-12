@@ -1,0 +1,54 @@
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../../config/mysql");
+const Storage = require("./storage");
+const Trakc = sequelize.define(
+  "tracks",
+  {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    album: {
+      type: DataTypes.STRING,
+    },
+    cover: {
+      type: DataTypes.STRING,
+    },
+    artist_name: {
+      type: DataTypes.STRING,
+    },
+    artist_nickname: {
+      type: DataTypes.STRING,
+    },
+    artist_nationality: {
+      type: DataTypes.STRING,
+    },
+    duration_start: {
+      type: DataTypes.INTEGER,
+    },
+    duration_end: {
+      type: DataTypes.INTEGER,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+//implementando modelo personalizado
+Trakc.findAllData = function () {
+  Trakc.belongsTo(Storage, {
+    foreignKey: "mediaId",
+    as: "audio",
+  });
+  return Trakc.findAll({ include: "audio" });
+};
+
+Trakc.findOneData = function (id) {
+  Trakc.belongsTo(Storage, {
+    foreignKey: "mediaId",
+    as: "audio",
+  });
+  return Trakc.findOne({ where: { id }, include: "audio" });
+};
+module.exports = Trakc;
